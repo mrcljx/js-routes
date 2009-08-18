@@ -1,0 +1,50 @@
+JSRoutes
+========
+
+JSRoute will convert named Rails routes to a JavaScript object. It has one method, copy_routes, that should be used
+when you app boots up, AFTER routes have been loaded.
+
+The best way is to add it to an initializer or create your own initializer in config/initializers named routes.rb. Call
+JSRoutes.copy_routes from that initializer.
+
+copy_routes accepts a hash of options, all optional:
+  :global - String; the name to give the router object in JavaScript. Defaults to 'Router'
+  :minify - Boolean; whether or not to minify the JavaScript getting written. Default to 'true' when Rails is in production
+  :filename - String; the filename for the router JavaScript file to write do. Defaults to 'router.js'
+  :path - String; the path (relative to RAILS_ROOT/public) to store the files in. Default to 'javascripts'
+  :append - String; the file path (relative to RAILS_ROOT/public) to append the Router JS to. This allows users to append the Router to any of their existing
+    JavaScript files.
+
+Example
+=======
+
+Ruby:
+
+JSRoutes.copy_routes # Create public/javascripts/router.js with JS object named 'Router'. Be sure to add javascript_include_tag(:router) if you do this!
+JSRoutes.copy_routes(:append => 'javascripts/application.js') # Append the Router to public/javascripts/application.js
+JSRoutes.copy_routes(:global => 'RailsRouter') # Create a router with JS object named 'RailsRouter'
+JSRoutes.copy_routes(:path => 'js/lib') # Create public/js/lib/router.js
+JSRoutes.copy_routes(:path => 'js/lib', :filename => 'rails_routes.js') # Create public/js/lib/rails_routes.js
+
+The resulting JavaScript object (by default named 'Router') is accessible as an application global. It responds to any named_route your router
+builds. For example, with the following route:
+
+map.contact 'contact/:id', :controller => 'main', :action => 'contact', :method => :get
+
+... the JavaScript object responds to the following methods:
+
+Router.contact(); # Absolute path to the contact resource
+Router.contact_path(); # Alias for above
+Router.contact_url(); # URL to the contact resource
+Router.contact({id: 1}) # Path to 'contact/1'
+
+The JavaScript router also handle all segment validations, just like the Rails router. For example, using the given route:
+
+map.market_quote 'quote/:state/:city', :controller => 'main', :action => 'quote', :requirements => {:city => /[A-Za-z0-9\+\.-]+/, :state => /[A-Z]{2,4}/}
+
+... the JavaScript object will throw errors unless both city and state are passed into the method. Example:
+
+Router.market_quote_path({city: 'Baltimore', state: 'MD'}) #=> '/quote/MD/Baltimore'
+Router.market_quote_path({city: 'Baltimore', state: 'foo'}) #=> Exception: '`state` (foo) does not match requirements: /[A-Z]{2,3}/'
+
+Copyright (c) 2009 Flip Sasser, released under the MIT license
