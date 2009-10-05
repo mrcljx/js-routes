@@ -1,8 +1,8 @@
 module JSRoutes
-  def self.copy_routes(options = {})
-    options = {:global => 'Router', :minify => RAILS_ENV == 'production', :filename => 'router.js', :path => 'javascripts'}.merge(options)
+  autoload(:JSRouter, 'js_routes/js_router')
+  def self.build
     # No idea what kind of overhead this module takes, but if you don't need it, you don't need it.
-    require 'js_routes/js_min' if options[:minify]
+    require 'js_routes/js_min' if @@options[:minify]
     routes = {}
     ActionController::Routing::Routes.named_routes.routes.each do |name, route|
       routes[name] = route.segments
@@ -11,12 +11,12 @@ module JSRoutes
     template_file = File.join(File.dirname(__FILE__), 'templates', 'router.js')
     if File.exists?(template_file)
       template = IO.read(template_file)
-      script = template.gsub('%routes%', routes.to_json).gsub('%global%', options[:global])
-      script = JSRoutes::JSMin.minify(script).gsub("\n", '') if options[:minify]
+      script = template.gsub('%routes%', routes.to_json).gsub('%global%', @@options[:global])
+      script = JSRoutes::JSMin.minify(script).gsub("\n", '') if @@options[:minify]
       script = "// JSRoutes 1.0\n// Copyright (C) 2009 Flip Sasser\n// http://x451.com\n#{script}"
-      if options[:append]
+      if @@options[:append]
         script << '//EndJSRoutes (DoNotRemoveThisComment!)'
-        original = File.read(File.join(RAILS_ROOT, 'public', options[:append])).split("\n")
+        original = File.read(File.join(RAILS_ROOT, 'public', @@options[:path])).split("\n")
         beginning = nil
         ending = nil
         original.each_with_index do |line, index|
@@ -43,14 +43,28 @@ module JSRoutes
           end
           original = original[0, beginning - 1] + original[ending + 1, original.length - 1]
         end
-        File.open(File.join(RAILS_ROOT, 'public', options[:append]), 'w+') {|file|
-          file.puts("#{original.join("\n")}\n\n#{script}")
-        }
+        # File.open(File.join(RAILS_ROOT, 'public', @@options[:path]), 'w+') {|file|
+          # file.puts("#{original.join("\n")}\n\n#{script}")
+          
+        # }
+        "#{original.join("\n")}\n\n#{script}"
       else
-        File.open(File.join(RAILS_ROOT, 'public', options[:path], options[:filename]), 'w+') {|file|
-          file.puts(script)
-        }
+        # File.open(File.join(RAILS_ROOT, 'public', options[:path], options[:filename]), 'w+') {|file|
+          # file.puts(script)
+        # }
+        script
       end
     end
+  end
+
+  def self.enable(options = {})
+    @@options = {:append => false, :global => 'Router', :minify => RAILS_ENV == 'production', :path => '/javascripts/router.js'}.merge(options)
+    # require 'js_routes/js_router'
+    ActionController::Dispatcher.middleware.use(JSRoutes::JSRouter)
+    ActionView::Helpers::AssetTagHelper.register_javascript_expansion :router => @@options[:path]
+  end
+
+  def self.options
+    @@options
   end
 end
