@@ -1,8 +1,6 @@
 module JSRoutes
   autoload(:JSRouter, 'js_routes/js_router')
   def self.build
-    # No idea what kind of overhead this module takes, but if you don't need it, you don't need it.
-    require 'js_routes/js_min' if @@options[:minify]
     routes = {}
     ActionController::Routing::Routes.named_routes.routes.each do |name, route|
       routes[name] = route.segments
@@ -12,7 +10,9 @@ module JSRoutes
     if File.exists?(template_file)
       template = IO.read(template_file)
       script = template.gsub('%routes%', routes.to_json).gsub('%global%', @@options[:global])
-      script = JSRoutes::JSMin.minify(script).gsub("\n", '') if @@options[:minify]
+      if @@options[:minify]
+        script = JSMin.minify(script).gsub("\n", '')
+      end
       script = "// JSRoutes 1.0\n// Copyright (C) 2009 Flip Sasser\n// http://x451.com\n#{script}"
       if @@options[:append]
         script << '//EndJSRoutes (DoNotRemoveThisComment!)'
@@ -43,15 +43,10 @@ module JSRoutes
           end
           original = original[0, beginning - 1] + original[ending + 1, original.length - 1]
         end
-        # File.open(File.join(RAILS_ROOT, 'public', @@options[:path]), 'w+') {|file|
-          # file.puts("#{original.join("\n")}\n\n#{script}")
-          
-        # }
-        "#{original.join("\n")}\n\n#{script}"
+        File.open(File.join(RAILS_ROOT, 'public', @@options[:path]), 'w+') {|file|
+          file.puts("#{original.join("\n")}\n\n#{script}")
+        }
       else
-        # File.open(File.join(RAILS_ROOT, 'public', options[:path], options[:filename]), 'w+') {|file|
-          # file.puts(script)
-        # }
         script
       end
     end
@@ -59,8 +54,7 @@ module JSRoutes
 
   def self.enable(options = {})
     @@options = {:append => false, :global => 'Router', :minify => RAILS_ENV == 'production', :path => '/javascripts/router.js'}.merge(options)
-    # require 'js_routes/js_router'
-    ActionController::Dispatcher.middleware.use(JSRoutes::JSRouter)
+    ActionController::Dispatcher.middleware.use(JSRoutes::JSRouter) unless options[:append]
     ActionView::Helpers::AssetTagHelper.register_javascript_expansion :router => @@options[:path]
   end
 

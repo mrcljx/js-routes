@@ -1,22 +1,16 @@
 require 'rake'
-require 'rake/testtask'
-require 'rake/rdoctask'
 
-desc 'Default: run unit tests.'
-task :default => :test
-
-desc 'Test the js_routes plugin.'
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = true
-end
-
-desc 'Generate documentation for the js_routes plugin.'
-Rake::RDocTask.new(:rdoc) do |rdoc|
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'JSRoutes'
-  rdoc.options << '--line-numbers' << '--inline-source'
-  rdoc.rdoc_files.include('README')
-  rdoc.rdoc_files.include('lib/**/*.rb')
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gemspec|
+    gemspec.name = "jsroutes"
+    gemspec.summary = "A Rails router to JavaScript plugin"
+    gemspec.description = ""
+    gemspec.email = "flip@x451.com"
+    gemspec.homepage = "http://github.com/flipsasser/jsroutes"
+    gemspec.authors = ["Flip Sasser"]
+    gemspec.add_dependency('jsmin', '>= 1.0.1')
+  end
+rescue LoadError
+  puts "Jeweler not available. Install it with: sudo gem install jeweler"
 end

@@ -2,24 +2,26 @@ JSRoutes
 =
 JSRoutes will convert *named* Rails routes to a JavaScript object. It uses an enable method that should be called when your app boots up.
 
-JSRoutes is completely untested beyond development in Safari. Neither the Ruby nor the JavaScript is currently guaranteed to work. It will, someday. Just not today.
+JSRoutes is completely untested beyond development in Safari. Neither the Ruby nor the JavaScript is currently guaranteed to work (but it seems to).
 
 Installation
 -
-In your RAILS_ROOT, run:
+In RAILS_ROOT/config/environment.rb, add a gem requirement:
 
-`ruby script/plugin install git://github.com/flipsasser/js-routes.git`
+	config.gem 'js-routes', :source => 'http://gemcutter.org'
+	
+... then run:
+
+	rake gems:install
 
 Usage
 -
-Add an initializer in config/initializers named routes.rb. Call `JSRoutes.enable` from that initializer.
+Add an initializer in config/initializers named routes.rb. Call `JSRoutes.enable` from that initializer. `enable` accepts a hash of options, all optional:
 
-`enable` accepts a hash of options, all optional:
-
-	:global - String; the name to give the router object in JavaScript. Defaults to 'Router'
+	:global - String; the name to give the global router object in JavaScript. Defaults to 'Router'
 	:minify - Boolean; whether or not to minify the JavaScript getting written. Defaults to 'true' when Rails is in production
 	:path - String; the file path (relative to RAILS_ROOT/public) in which to store the Router code. Defaults to '/javascripts/router.js'
-	:append - Boolean; whether or not to append the routing code to the bottom of an existing JavaScript file.
+	:append - Boolean; whether or not to append the routing code to the bottom of an existing JavaScript file. Adding :append => true will reduce your server requests by including the Router code in your JavaScript application.
 
 Example
 -
@@ -37,10 +39,9 @@ The resulting JavaScript object (by default named 'Router') is accessible as an 
 
 ... the JavaScript object responds to the following methods:
 
-	Router.contact(); # Absolute path to the contact resource. I know, I know, this isn't the Rails Way, but come *on*...
-	Router.contact_path(); # Alias for the above
-	Router.contact_url(); # Full URL for the path contact resource ('http://localhost:3000/contact')
-	Router.contact({id: 1}) # Path to 'contact/1'
+	Router.contacts_path(); # Absolute path to the contacts resource.
+	Router.contacts_url(); # Full URL for the path contacts resource ('http://localhost:3000/contact')
+	Router.contact_path({id: 1}) # Path to '/contact/1'
 
 The JavaScript router also handles some segment validations, just like the Rails router. For example, using the given route:
 
