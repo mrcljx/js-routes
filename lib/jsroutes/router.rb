@@ -1,5 +1,5 @@
 module JSRoutes
-  class JSRouter
+  class Router
     def call(env)
       if env['PATH_INFO'] =~ /#{JSRoutes.options[:path]}/
         script = JSRoutes.build

@@ -1,5 +1,5 @@
 module JSRoutes
-  autoload(:JSRouter, 'js_routes/js_router')
+  autoload(:Router, 'jsroutes/router')
   def self.build
     routes = {}
     ActionController::Routing::Routes.named_routes.routes.each do |name, route|
@@ -54,7 +54,7 @@ module JSRoutes
 
   def self.enable(options = {})
     @@options = {:append => false, :global => 'Router', :minify => RAILS_ENV == 'production', :path => '/javascripts/router.js'}.merge(options)
-    ActionController::Dispatcher.middleware.use(JSRoutes::JSRouter) unless options[:append]
+    ActionController::Dispatcher.middleware.use(JSRoutes::Router) unless options[:append]
     ActionView::Helpers::AssetTagHelper.register_javascript_expansion :router => @@options[:path]
   end
 
