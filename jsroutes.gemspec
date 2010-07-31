@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Flip Sasser"]
-  s.date = %q{2009-11-14}
+  s.date = %q{2010-08-01}
   s.description = %q{}
   s.email = %q{flip@x451.com}
   s.extra_rdoc_files = [
@@ -21,6 +21,9 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "jsroutes.gemspec",
+     "lib/jsroutes.rb",
+     "lib/jsroutes/initializer.rb",
+     "lib/jsroutes/router.rb",
      "lib/templates/router.js",
      "rails/init.rb",
      "spec/jsroutes_spec.rb",
@@ -32,8 +35,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{A Rails router to JavaScript plugin}
   s.test_files = [
-    "spec/js_routes_spec.rb",
-     "spec/rails_initializer_spec.rb"
+    "spec/rails_initializer_spec.rb",
+     "spec/jsroutes_spec.rb"
   ]
 
   if s.respond_to? :specification_version then
