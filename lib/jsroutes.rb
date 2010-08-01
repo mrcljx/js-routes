@@ -1,5 +1,9 @@
+require 'jsmin'
+
 module JSRoutes
+
   autoload(:Router, 'jsroutes/router')
+
   def self.build
     routes = {}
     ActionController::Routing::Routes.named_routes.routes.each do |name, route|
