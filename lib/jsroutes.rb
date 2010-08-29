@@ -23,7 +23,7 @@ module JSRoutes
     script = JSMin.minify(script).gsub("\n", '') if @@options[:minify]
     script = "// JSRoutes 1.0\n// Copyright (C) 2009 Flip Sasser\n// http://x451.com\n#{script}"
     
-    return unless @@options[:append]
+    return script unless @@options[:append]
     
     append_path = File.join(RAILS_ROOT, 'public', @@options[:path])
     original = File.read(append_path).split("\n")
