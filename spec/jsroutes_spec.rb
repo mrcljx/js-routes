@@ -1,3 +1,0 @@
-describe JSRoutes do
-  
-end
