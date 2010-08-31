@@ -1,38 +1,56 @@
+require 'jsmin'
 require 'jsroutes/railtie' if defined?(Rails::Railtie)
 
 module JSRoutes
   COPYRIGHT_NOTE = '// JSRoutes, http://github.com/sirlantis/js-routes'
-    
-  DEFAULT_GLOBAL = 'Router'
   
   autoload :Router, 'jsroutes/router'
   
+  mattr_accessor :global, :minify, :path, :mount, :write
+  
+  @@global = 'Router'
+  @@minify = false
+  @@mount  = true
+  @@path   = 'public/javascripts/router.js'
+  @@write  = true
+  
+  @@setup  = nil
+  
   class << self
-    def build
-      template = IO.read(template_file)
-      script = template.gsub('%routes%', converted_routes.to_json).gsub('%global%', @@options[:global])
-      script = JSMin.minify(script) if minify?
+    alias minify? minify
+    alias mount? mount
+    alias write? write
     
-      File.open(output_path, 'w') do |file|
-        file.puts(COPYRIGHT_NOTE)
-        file.puts(script)
+    def build
+      template_file = File.join(File.dirname(__FILE__), 'templates', 'router.js')
+      template = IO.read(template_file)
+
+      script = template.gsub('%routes%', converted_routes.to_json).gsub('%global%', global)
+      script = JSMin.minify(script) if minify?
+
+      if write?
+        File.open(full_output_path, 'w') do |file|
+          file.puts(COPYRIGHT_NOTE)
+          file.puts(script)
+        end
       end
     
       script
     end
 
-    def configure(options = {})
-      @@options ||= {
-        :global => DEFAULT_GLOBAL,
-        :minify => Rails.env.production?,
-        :path => default_output_path
-      }
-    
-      @@options = @@options.merge(options)
+    def setup(&block)
+      @@setup = block
     end
-
-    def options
-      @@options
+    
+    def configured?
+      !!@@setup
+    end
+    
+    def boot!(app)
+      @@setup.call(self) if configured?
+      
+      self.build if write?
+      app.middleware.use "JSRoutes::Router" if mount?
     end
   
     protected
@@ -48,24 +66,12 @@ module JSRoutes
       end
     end
   
-    def minify?
-      @@options[:minify]
-    end
-  
-    def template_file
-      File.join(File.dirname(__FILE__), 'templates', 'router.js')
-    end
-  
     def named_routes
       Rails.application.routes.named_routes
     end
   
-    def default_output_path
-      Rails.root.join('public', 'javascripts', 'routes.js')
-    end
-  
-    def output_path
-      Rails.root.join('public', @@options[:path])
+    def full_output_path
+      Rails.root.join(path)
     end
   end
 end
