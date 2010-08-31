@@ -20,5 +20,24 @@ require 'jasmine'
 load 'jasmine/tasks/jasmine.rake'
 
 task :spec do
-  exec "./specs.sh"
+  exec "node specs.js $@"
+end
+
+task :jslint do
+  template_file = File.join(File.dirname(__FILE__), 'lib', 'templates', 'router.js')
+  template = IO.read(template_file)
+
+  script = template.gsub('%routes%', {}.to_json).gsub('%global%', 'Router')
+  
+  # require 'jsmin'
+  # script = JSMin.minify(script)
+  
+  require 'tempfile'
+  tmp = Tempfile.new('jsroutes.js')
+  File.open(tmp.path, 'w') do |f|
+    f.puts script
+  end
+  
+  puts "JSLint on #{tmp.path}"
+  exec "jslint #{tmp.path}"
 end
