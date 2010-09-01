@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{jsroutes}
-  s.version = "0.0.3"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Flip Sasser"]
-  s.date = %q{2010-08-31}
+  s.date = %q{2010-09-01}
   s.description = %q{}
   s.email = %q{flip@x451.com}
   s.extra_rdoc_files = [
@@ -24,14 +24,12 @@ Gem::Specification.new do |s|
      "lib/jasmine/index.js",
      "lib/jasmine/jasmine-0.10.2.js",
      "lib/jsroutes.rb",
-     "lib/jsroutes/initializer.rb",
      "lib/jsroutes/railtie.rb",
      "lib/jsroutes/router.rb",
      "lib/templates/router.js",
      "spec/javascripts/helpers/RouterSpec.js",
      "spec/javascripts/helpers/SpecHelper.js",
-     "specs.js",
-     "specs.sh"
+     "specs.js"
   ]
   s.homepage = %q{http://github.com/flipsasser/jsroutes}
   s.rdoc_options = ["--charset=UTF-8"]
