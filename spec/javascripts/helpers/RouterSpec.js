@@ -33,6 +33,13 @@ describe("Router", function() {
     expect(Router.post_path({id: 4, format: 'json'})).toEqual('/posts/4.json');
   });
   
+  it('should handle many paramters', function() {
+    Router.bindRoute('many', { path: '/:z/:b/:x/:d', keys: ['z', 'b', 'x', 'd'] });
+    
+    expect(Router.many_path(5,2,8,0)).toEqual('/5/2/8/0');
+    expect(Router.many_path({z: 1, x: 3, d: 4})).toEqual('/1/:b/3/4');
+  });
+  
   describe("helper methods", function() {
     it('should cleanup optional parameters', function() {
       expect(Router.cleanupPath('/foo(.bar)')).toEqual('/foo.bar');
