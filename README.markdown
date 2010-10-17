@@ -1,57 +1,73 @@
 JSRoutes
 =
-JSRoutes will convert *named* Rails routes to a JavaScript object. It uses an enable method that should be called when your app boots up.
-
-JSRoutes is completely untested beyond development in Safari. Neither the Ruby nor the JavaScript is currently guaranteed to work (but it seems to).
+JSRoutes will enable you to use *named* Rails routes in JavaScript.
 
 Installation
 -
-In RAILS_ROOT/config/environment.rb, add a gem requirement:
+Add the gem requirement to your GEMFILE
 
-	config.gem 'js-routes', :source => 'http://gemcutter.org'
-	
-... then run:
+  gem 'js-routes', :git => 'git://github.com/sirlantis/js-routes.git'
+  
+I recommend that you also specify a `:tag` to prevent incompatibilties.
 
-	rake gems:install
-
-Usage
+Configuration
 -
-Add an initializer in config/initializers named routes.rb. Call `JSRoutes.enable` from that initializer. `enable` accepts a hash of options, all optional:
+Configuration is done in the `application.rb` of your Rails 3 app - accessible via `config.jsroutes`. The available options and their defaults:
 
-	:global - String; the name to give the global router object in JavaScript. Defaults to 'Router'
-	:minify - Boolean; whether or not to minify the JavaScript getting written. Defaults to 'true' when Rails is in production
-	:path - String; the file path (relative to RAILS_ROOT/public) in which to store the Router code. Defaults to '/javascripts/router.js'
-	:append - Boolean; whether or not to append the routing code to the bottom of an existing JavaScript file. Adding :append => true will reduce your server requests by including the Router code in your JavaScript application.
+    # How the JavaScript object will be named
+    config.jsroutes.global  = "Router"
+    
+    # Should the JS file be minified?
+    config.jsroutes.minify  = Rails.env.production?
+    
+    # Where should the file be stored / be accessed at.
+    config.jsroutes.path    = 'javascripts/router.js'
+    
+    # Should JSRoutes be mounted as a **middleware** (development, Heroku) or write the file at boot-time (production)?
+    config.jsroutes.mode    = Rails.env.production? ? :write : :mount
 
-Example
+Examples
 -
 
-Ruby (in your initializer):
+### Routes
+    get :signup
 
-	JSRoutes.enable # Store routes in public/javascripts/router.js and create the JS object 'Router'. Be sure to add javascript_include_tag(:router) if you do this!
-	JSRoutes.enable(:append => 'javascripts/application.js') # Append the Router object to public/javascripts/application.js
-	JSRoutes.enable(:global => 'RailsRouter') # Store routes with a JS object named 'RailsRouter'
-	JSRoutes.enable(:path => 'js/lib/foobar.js') # Store routes in public/js/lib/foobar.js
+    resources :posts do
+      resources :comments
+    end
+    
+### Views
 
-The resulting JavaScript object (by default named 'Router') is accessible as an application global. It responds to any named_route your router builds. For example, with the following route:
+    Router.signup_path()
+    > /signup
+    
+    Router.signup_url()
+    > http://yourwebsite.com:3000/signup
+    
+    Router.posts_path()
+    > /posts
+    
+    Router.post_path(3)
+    > /posts/3
 
-	map.contact 'contact/:id', :controller => 'main', :action => 'contact', :method => :get
+    # nested resources
+    Router.post_comment_path(3, 4)
+    > /posts/3/comments/4
+    
+    # named params, all same output
+    Router.post_path(3, "xml")
+    Router.post_path(3, {format: "xml"})
+    Router.post_path({id: 3, format: "xml"})
+    > /posts/3.xml
+    
+    # additional params
+    Router.post_path({id: 3, format: "xml", foo: "bar"})
+    > /posts/3.xml?foo=bar
+    
+Compatibility
+-
+The way JSRoutes is built it should be able to handle all of Rails options for Routes (optional params etc.).
 
-... the JavaScript object responds to the following methods:
-
-	Router.contacts_path(); # Absolute path to the contacts resource.
-	Router.contacts_url(); # Full URL for the path contacts resource ('http://localhost:3000/contact')
-	Router.contact_path({id: 1}) # Path to '/contact/1'
-
-The JavaScript router also handles some segment validations, just like the Rails router. For example, using the given route:
-
-	map.market_quote 'quote/:state/:city', :controller => 'main', :action => 'quote', :requirements => {:city => /[A-Za-z0-9\+\.-]+/, :state => /[A-Z]{2,4}/}
-
-... the JavaScript object will throw errors unless an appropriate city and state are passed into the method. Example:
-
-	Router.market_quote_path({city: 'Baltimore', state: 'MD'}) #=> '/quote/MD/Baltimore'
-	Router.market_quote_path({city: 'Baltimore', state: 'foo'}) #=> Exception: '`state` (foo) does not match requirements: /[A-Z]{2,3}/'
-
-I'll be adding full Router support at some point, and possibly MooTools, Prototype, and/or jQuery AJAX integration (e.g. `Router.post_market_quote_path({options: whatever}, {data: 'values'}, callback)`)
-
-Copyright (c) 2009 Flip Sasser, released under the MIT license
+Intellectual Property
+-
+Copyright (c) 2010 Marcel Jackwerth (inspired by Flip Sasser), released under the MIT license
