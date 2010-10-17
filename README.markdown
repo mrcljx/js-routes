@@ -30,7 +30,7 @@ Examples
 -
 
 ### Routes
-    get :signup
+    get :signup, :as => :signup
 
     resources :posts do
       resources :comments
