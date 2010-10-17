@@ -1,16 +1,16 @@
 module JSRoutes
-  class Router
+  class Rack
+    def initialize(app)
+      @app = app
+    end
+    
     def call(env)
-      if env['PATH_INFO'] =~ /#{JSRoutes.options[:path]}/
+      if env['PATH_INFO'] =~ /^#{Regexp.escape(JSRoutes.mount_url)}$/
         script = JSRoutes.build
         [200, {'Content-Type' => 'text/javascript', 'Content-Length' => script.length.to_s}, script]
       else
         @app.call(env)
       end
-    end
-
-    def initialize(app)
-      @app = app
     end
   end
 end

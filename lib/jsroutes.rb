@@ -4,22 +4,24 @@ require 'jsroutes/railtie' if defined?(Rails::Railtie)
 module JSRoutes
   COPYRIGHT_NOTE = '// JSRoutes, http://github.com/sirlantis/js-routes'
   
-  autoload :Router, 'jsroutes/router'
+  autoload :Rack, 'jsroutes/rack'
   
-  mattr_accessor :global, :minify, :path, :mount, :write
+  mattr_reader :config
   
-  @@global = 'Router'
-  @@minify = false
-  @@mount  = true
-  @@path   = 'public/javascripts/router.js'
-  @@write  = true
-  
-  @@setup  = nil
+  @@config = nil
   
   class << self
+    delegate :mode, :minify, :path, :global, :to => :config
+    
     alias minify? minify
-    alias mount? mount
-    alias write? write
+    
+    def write?
+      mode == :write
+    end
+    
+    def mount?
+      mode == :mount
+    end
     
     def build
       template_file = File.join(File.dirname(__FILE__), 'templates', 'router.js')
@@ -37,20 +39,15 @@ module JSRoutes
     
       script
     end
-
-    def setup(&block)
-      @@setup = block
+    
+    def configure(app)
+      @@config = app.config.jsroutes
+      app.config.middleware.use(JSRoutes::Rack) if mount?
+      File.delete(full_output_path) if File.file?(full_output_path)
     end
     
-    def configured?
-      !!@@setup
-    end
-    
-    def boot!(app)
-      @@setup.call(self) if configured?
-      
-      self.build if write?
-      app.middleware.use "JSRoutes::Router" if mount?
+    def mount_url
+      "/#{path}"
     end
   
     protected
@@ -71,7 +68,7 @@ module JSRoutes
     end
   
     def full_output_path
-      Rails.root.join(path)
+      File.join(Rails.public_path, path)
     end
   end
 end
