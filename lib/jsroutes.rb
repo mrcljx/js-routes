@@ -16,6 +16,10 @@ module JSRoutes
     alias minify? minify
 
     def write?
+      mode == :write || mode == :write_once
+    end
+
+    def overwrite?
       mode == :write
     end
 
@@ -31,9 +35,11 @@ module JSRoutes
       script = JSMin.minify(script) if minify?
 
       if write?
-        File.open(full_output_path, 'w') do |file|
-          file.puts(COPYRIGHT_NOTE)
-          file.puts(script)
+        if overwrite? or !File.exist?(full_output_path)
+          File.open(full_output_path, 'w') do |file|
+            file.puts(COPYRIGHT_NOTE)
+            file.puts(script)
+          end
         end
       end
 

@@ -7,13 +7,13 @@ module JSRoutes
       c.global  = "Router"
       c.minify  = Rails.env.production?
       c.path    = 'javascripts/router.js'
-      c.mode    = Rails.env.production? ? :write : :mount
+      c.mode    = Rails.env.production? ? :write_once : :mount
     end
-    
+
     config.before_initialize do |app|
       JSRoutes.configure(app)
     end
-    
+
     config.after_initialize do |app|
       JSRoutes.build if JSRoutes.write?
     end
