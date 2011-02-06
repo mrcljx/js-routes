@@ -27,19 +27,17 @@ module JSRoutes
       mode == :mount
     end
 
-    def build
+    def build(force = false)
       template_file = File.join(File.dirname(__FILE__), 'templates', 'router.js')
       template = IO.read(template_file)
 
       script = template.gsub('%routes%', converted_routes.to_json).gsub('%global%', global)
       script = JSMin.minify(script) if minify?
 
-      if write?
-        if overwrite? or !File.exist?(full_output_path)
-          File.open(full_output_path, 'w') do |file|
-            file.puts(COPYRIGHT_NOTE)
-            file.puts(script)
-          end
+      if force or (write? and (overwrite? or !File.exist?(full_output_path)))
+        File.open(full_output_path, 'w') do |file|
+          file.puts(COPYRIGHT_NOTE)
+          file.puts(script)
         end
       end
 
