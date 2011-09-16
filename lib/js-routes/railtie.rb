@@ -1,9 +1,9 @@
-require 'jsroutes'
+require 'js-routes'
 require 'rails'
 
-module JSRoutes
+module JsRoutes
   class Railtie < Rails::Railtie
-    config.jsroutes = ActiveSupport::OrderedOptions.new.tap do |c|
+    config.js_routes = ActiveSupport::OrderedOptions.new.tap do |c|
       c.global  = "Router"
       c.minify  = Rails.env.production?
       c.path    = 'javascripts/router.js'
@@ -11,11 +11,11 @@ module JSRoutes
     end
 
     config.before_initialize do |app|
-      JSRoutes.configure(app)
+      JsRoutes.configure(app)
     end
 
     config.after_initialize do |app|
-      JSRoutes.build if JSRoutes.write?
+      JsRoutes.build if JsRoutes.write?
     end
   end
 end

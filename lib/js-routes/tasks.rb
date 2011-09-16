@@ -1,6 +1,6 @@
-namespace :jsroutes do
+namespace :js_routes do
   desc "Render routes to router.js file"
   task :draw => :environment do
-    JSRoutes.build(:force)
+    JsRoutes.build(:force)
   end
 end

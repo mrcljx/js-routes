@@ -15,11 +15,11 @@ require 'rake'
 require 'jeweler'
 
 Jeweler::Tasks.new do |gem|
-  gem.name = "jsroutes"
+  gem.name = "js-routes"
   gem.summary = "Expose Rails's routes to JavaScript"
   gem.description = ""
   gem.email = "marceljackwerth@gmail.com"
-  gem.homepage = "http://github.com/sirlantis/jsroutes"
+  gem.homepage = "http://github.com/sirlantis/js-routes"
   gem.authors = ["Marcel Jackwerth"]
   gem.license = "MIT"
 end
@@ -92,7 +92,7 @@ namespace :lint do
     # script = JSMin.minify(script)
 
     require 'tempfile'
-    tmp = Tempfile.new('jsroutes.js')
+    tmp = Tempfile.new('js-routes.js')
     File.open(tmp.path, 'w') do |f|
       f.puts script
     end

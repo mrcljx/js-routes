@@ -1,2 +1,2 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
-require 'jsroutes/tasks'
+require 'js-routes/tasks'

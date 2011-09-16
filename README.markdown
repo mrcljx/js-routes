@@ -1,6 +1,6 @@
-JSRoutes
+JsRoutes
 =
-JSRoutes will enable you to use *named* Rails routes in JavaScript.
+JsRoutes will enable you to use *named* Rails routes in JavaScript.
 
 Installation
 -
@@ -15,17 +15,17 @@ Configuration
 Configuration is done in the `application.rb` of your Rails 3 app - accessible via `config.jsroutes`. The available options and their defaults:
 
     # How the JavaScript object will be named
-    config.jsroutes.global  = "Router"
+    config.js_routes.global  = "Router"
 
     # Should the JS file be minified?
-    config.jsroutes.minify  = Rails.env.production?
+    config.js_routes.minify  = Rails.env.production?
 
     # Where should the file be stored / be accessed at.
-    config.jsroutes.path    = 'javascripts/router.js'
+    config.js_routes.path    = 'javascripts/router.js'
 
-    # Should JSRoutes be mounted as a **middleware** (development, Heroku) or write the file once at boot-time (production)?
+    # Should JsRoutes be mounted as a **middleware** (development, Heroku) or write the file once at boot-time (production)?
     # There is also a :write option which can cause issues if more instances are booted (cluster/mod_passenger).
-    config.jsroutes.mode    = Rails.env.production? ? :write_once : :mount
+    config.js_routes.mode    = Rails.env.production? ? :write_once : :mount
 
 Examples
 -
@@ -67,7 +67,7 @@ Examples
 
 Compatibility
 -
-The way JSRoutes is built it should be able to handle all of Rails options for Routes (optional params etc.).
+The way JsRoutes is built it should be able to handle all of Rails options for Routes (optional params etc.).
 
 Intellectual Property
 -

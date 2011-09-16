@@ -1,10 +1,10 @@
 require 'jsmin'
-require 'jsroutes/railtie' if defined?(Rails::Railtie)
+require 'js-routes/railtie' if defined?(Rails::Railtie)
 
-module JSRoutes
-  COPYRIGHT_NOTE = '// JSRoutes, http://github.com/sirlantis/js-routes'
+module JsRoutes
+  COPYRIGHT_NOTE = '// JsRoutes, http://github.com/sirlantis/js-routes'
 
-  autoload :Rack, 'jsroutes/rack'
+  autoload :Rack, 'js-routes/rack'
 
   mattr_reader :config
 
@@ -45,11 +45,11 @@ module JSRoutes
     end
 
     def configure(app)
-      @@config = app.config.jsroutes
+      @@config = app.config.js_routes
 
       if mount?
         File.delete(full_output_path) if File.file?(full_output_path)
-        app.config.middleware.use(JSRoutes::Rack)
+        app.config.middleware.use(JsRoutes::Rack)
       end
     end
 
