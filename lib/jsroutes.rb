@@ -31,7 +31,7 @@ module JSRoutes
       template_file = File.join(File.dirname(__FILE__), 'templates', 'router.js')
       template = IO.read(template_file)
 
-      script = template.gsub('%routes%', converted_routes.to_json).gsub('%global%', global)
+      script = "" << template << global << " = " << "new RouterClass(" << converted_routes.to_json << ");"
       script = JSMin.minify(script) if minify?
 
       if force or (write? and (overwrite? or !File.exist?(full_output_path)))
