@@ -24,9 +24,9 @@ Jeweler::Tasks.new do |gem|
   gem.license = "MIT"
 end
 
-Jeweler::RubygemsDotOrgTasks.new
+# Jeweler::RubygemsDotOrgTasks.new
 
-task :release => ['gemspec:release', 'git:release', 'gemcutter:release']
+task :release => ['gemspec:release', 'git:release']
 
 task :default => :ci
 
