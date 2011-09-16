@@ -1,20 +1,27 @@
-require 'rake'
+# encoding: utf-8
+
+require 'rubygems'
+require 'bundler'
 
 begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "jsroutes"
-    gemspec.summary = "Expose Rails's routes to JavaScript"
-    gemspec.description = ""
-    gemspec.email = "marceljackwerth@gmail.com"
-    gemspec.homepage = "http://github.com/sirlantis/jsroutes"
-    gemspec.authors = ["Marcel Jackwerth"]
-    gemspec.add_development_dependency('jsmin', '>= 1.0.1')
-    gemspec.add_development_dependency('jasmine', '>= 1.1.0')
-    gemspec.add_development_dependency('rails', '>= 3.0.0')
-  end
-rescue LoadError
-  puts "Jeweler not available. Install it with: sudo gem install jeweler"
+  Bundler.setup(:default, :development)
+rescue Bundler::BundlerError => e
+  $stderr.puts e.message
+  $stderr.puts "Run `bundle install` to install missing gems"
+  exit e.status_code
+end
+
+require 'rake'
+require 'jeweler'
+
+Jeweler::Tasks.new do |gem|
+  gem.name = "jsroutes"
+  gem.summary = "Expose Rails's routes to JavaScript"
+  gem.description = ""
+  gem.email = "marceljackwerth@gmail.com"
+  gem.homepage = "http://github.com/sirlantis/jsroutes"
+  gem.authors = ["Marcel Jackwerth"]
+  gem.license = "MIT"
 end
 
 task :default => :ci

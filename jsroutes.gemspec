@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
     "tasks/jsroutes.rake"
   ]
   s.homepage = "http://github.com/sirlantis/jsroutes"
+  s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = "1.8.10"
   s.summary = "Expose Rails's routes to JavaScript"
@@ -42,18 +43,30 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<rake>, [">= 0"])
+      s.add_runtime_dependency(%q<bundler>, [">= 0"])
+      s.add_development_dependency(%q<jeweler>, [">= 0"])
       s.add_development_dependency(%q<jsmin>, [">= 1.0.1"])
       s.add_development_dependency(%q<jasmine>, [">= 1.1.0"])
       s.add_development_dependency(%q<rails>, [">= 3.0.0"])
+      s.add_development_dependency(%q<ruby-debug>, [">= 0"])
     else
+      s.add_dependency(%q<rake>, [">= 0"])
+      s.add_dependency(%q<bundler>, [">= 0"])
+      s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<jsmin>, [">= 1.0.1"])
       s.add_dependency(%q<jasmine>, [">= 1.1.0"])
       s.add_dependency(%q<rails>, [">= 3.0.0"])
+      s.add_dependency(%q<ruby-debug>, [">= 0"])
     end
   else
+    s.add_dependency(%q<rake>, [">= 0"])
+    s.add_dependency(%q<bundler>, [">= 0"])
+    s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<jsmin>, [">= 1.0.1"])
     s.add_dependency(%q<jasmine>, [">= 1.1.0"])
     s.add_dependency(%q<rails>, [">= 3.0.0"])
+    s.add_dependency(%q<ruby-debug>, [">= 0"])
   end
 end
 
