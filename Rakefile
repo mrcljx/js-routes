@@ -24,6 +24,10 @@ Jeweler::Tasks.new do |gem|
   gem.license = "MIT"
 end
 
+Jeweler::RubygemsDotOrgTasks.new
+
+task :release => ['gemspec:release', 'git:release', 'gemcutter:release']
+
 task :default => :ci
 
 desc "Runs all relevant tasks to check healthiness of this gem"
