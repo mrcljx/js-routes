@@ -1,4 +1,3 @@
-require 'jsmin'
 require 'js-routes/railtie' if defined?(Rails::Railtie)
 
 module JsRoutes
@@ -32,7 +31,17 @@ module JsRoutes
       template = IO.read(template_file)
 
       script = "" << template << global << " = " << "new RouterClass(" << converted_routes.to_json << ");"
-      script = JSMin.minify(script) if minify?
+
+      if minify?
+        begin
+          require 'jsmin'
+        rescue => e
+          puts "Couldn't load JSMin. js-routes won't minify."
+          @require_jsmin_failed = true
+        end unless @require_jsmin_failed
+
+        script = JSMin.minify(script) if defined?(JSMin)
+      end
 
       if force or (write? and (overwrite? or !File.exist?(full_output_path)))
         File.open(full_output_path, 'w') do |file|
